@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+        <!-- Bootstrap core CSS -->
+    <link href="/docs/4.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="settings.css">
+        <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/docs/4.5/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/docs/4.5/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/docs/4.5/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="manifest" href="/docs/4.5/assets/img/favicons/manifest.json">
+    <link rel="mask-icon" href="/docs/4.5/assets/img/favicons/safari-pinned-tab.svg" color="#563d7c">
+    <link rel="icon" href="/docs/4.5/assets/img/favicons/favicon.ico">
+    <meta name="msapplication-config" content="/docs/4.5/assets/img/favicons/browserconfig.xml">
+    <meta name="theme-color" content="#563d7c">
+</head>
+<body id="body" class="burly">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="index.html">Carousel</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/dashboard">Dashboard</a>
+              </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/friends">My Friends</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/settings">Settings</a>
+            </li>
+          </ul>
+        
+        </div>
+    </nav>
+    <div class="settings-table">
+        <ul class="list-group">
+            <li style="text-align: left;" class="list-group-item">Username: <%= user.Username %>
+                <button onclick="username();" class="update-info-button">Update</button>
+            </li>
+            <li style="text-align: left;" class="list-group-item">Email: <%= user.Email %>
+                <button onclick="email_address();" class="update-info-button">Update</button>
+            </li>
+            <li style="text-align: left;" class="list-group-item">First Name:  <%= user.First %>
+                <button onclick="first_name();" class="update-info-button">Update</button>
+            </li>
+            <li style="text-align: left;" class="list-group-item">Last Name:  <%= user.Last %>
+                <button onclick="last_name();" class="update-info-button">Update</button>
+            </li>
+        </ul>
+    </div>
+   
+    <div id="popup" class="hide">
+    <form action="/update" method="POST">
+        <input id="text_input" class="hide" name="bob" type="text">
+        <button id="close-button" class="hide" onclick="close1();">&#10006;</button>
+        <button type="submit"></button>
+    </form>
+    </div>
+
+</body>
+
+<script>
+    var popup = document.querySelector("#popup");
+    var text_input = document.querySelector("#text_input");
+    var close_button = document.querySelector("#close-button");
+    var body = document.querySelector("#body");
+    function username(){
+        body.style.backgroundColor = "#8c8c8c";
+        popup.classList.remove("hide")
+        popup.classList.add("show")
+        popup.classList.add("username_div")
+        text_input.classList.remove("hide");
+        text_input.classList.add("show");
+        close_button.classList.remove("hide");
+        close_button.classList.add("show")
+        text_input.name = "username";
+
+    }
+    
+    function email_address(){
+        popup.classList.add("email_div");
+        body.style.backgroundColor = "#8c8c8c";
+        popup.classList.remove("hide")
+        popup.classList.add("show")
+        text_input.classList.remove("hide");
+        text_input.classList.add("show");
+        close_button.classList.remove("hide");
+        close_button.classList.add("show")
+
+        text_input.name = "email";
+    }
+    
+    function first_name(){
+        body.style.backgroundColor = "#8c8c8c";
+        popup.classList.remove("hide")
+        popup.classList.add("show")
+        popup.classList.add("first_name_div")
+        text_input.classList.remove("hide");
+        text_input.classList.add("show");
+        close_button.classList.remove("hide");
+        close_button.classList.add("show")
+        text_input.name = "firstName";    
+    }
+
+    function last_name() {
+        popup.classList.add("last_Name_div")
+        body.style.backgroundColor = "#8c8c8c";
+        popup.classList.remove("hide")
+        popup.classList.add("show")
+        text_input.classList.remove("hide");
+        text_input.classList.add("show");
+        close_button.classList.remove("hide");
+        close_button.classList.add("show")
+
+        text_input.name = "lastName"
+    }
+
+    function close1(){
+        for (var i = 0; i < popup.classList.length; i++){
+            popup.classList.remove(popup.classList[i]);
+        }
+        popup.classList.add("hide")
+        text_input.classList.remove("show");
+        text_input.classList.add("hide");
+        close_button.classList.remove("show");
+        close_button.classList.add("hide")
+        console.log(popup)
+        body.style.backgroundColor = "";
+    }
+    
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "forumapp",
+  "version": "1.0.0",
+  "description": "This is a Forum App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Isfar Oshir",
+  "license": "ISC",
+  "dependencies": {
+    "client-sessions": "^0.8.0",
+    "cookie-parser": "^1.4.5",
+    "ejs": "^3.1.3",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "mongoose": "^5.10.0",
+    "nodemon": "^2.0.4",
+    "uuid": "^8.3.0"
+  }
+}
