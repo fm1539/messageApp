@@ -4,7 +4,7 @@ const mongoose = require("mongoose")
 const ejs = require("ejs")
 const cookieParser = require("cookie-parser")
 var session = require("express-session")
-const { v4: uuidv4 } = require('uuid');
+// const { v4: uuidv4 } = require('uuid');
 var session = require('client-sessions');
 
 const URI = "mongodb+srv://isfar:testing321@cluster0.jrwic.mongodb.net/data?retryWrites=true&w=majority"
@@ -13,7 +13,7 @@ const app = express()
 
 app.use(express.static("public"))
 app.use(bodyParser.urlencoded({extended: true}))
-app.use(cookieParser())
+app.use(cookieParser())   //happened to be here
 // app.use(session({
 //     genid: function(req) {
 //       return uuidv4() // use UUIDs for session IDs
@@ -84,19 +84,14 @@ app.get('/dashboard', function(req, res){
 })
 
 app.get("/settings", function(req,res){
-    console.log(req.session.user.email);
+    // console.log(req.session.user.email);
     User.findOne({email: req.session.user.email}, function(err, foundUser){
         if (err){
             console.log(err);
         }
         else{
-            var user = { 
-                Email: foundUser.email,
-                Username: foundUser.username,
-                First: foundUser.first,
-                Last: foundUser.last
-            }
-            res.render("settings", {user: user });  
+            // console.log(foundUser)
+            res.render("settings", {user: foundUser });  
         }
         
     })
@@ -108,7 +103,6 @@ app.post("/login", function(req,res){
     const email = req.body.email
     const password = req.body.password
     // req.session.id = req.session.id || uuidv4()
-    req.session.id = "Isfar"
     console.log(req.session.id);
     User.findOne({email: email}, function(err, foundUser){
         if (err){
@@ -158,8 +152,7 @@ app.post("/register", function(req, res){
 })
 
 app.post("/update", function(req,res){
-    var query = User.findOne({ 'email': req.session.user.email });
-    console.log(query.password);
+    var user = req.session.user
     
     var which = [
         req.body.username,
@@ -167,22 +160,82 @@ app.post("/update", function(req,res){
         req.body.firstName,
         req.body.lastName
     ]
+
     for (var i = 0; i < which.length; i++){
         if (which[i] !== undefined){
             var focus = which[i]
             var focusIndex = i
+            console.log(focus);
+            console.log(focusIndex);
         }
     }
-    if(i == 0){
-        const filter = { username: req.session.user.email };
-        const update = { username: focus };
 
-        User.findOneAndUpdate(filter, update);
+    if(focusIndex == 0){
+        var id = req.session.user._id
+        User.updateOne({_id: id},{username: focus}, function(err, result){
 
-        console.log(which);
-        console.log(focus);
-        res.render("settings")
+            if(err){
+                console.log(err);
+            }
+            else{
+                User.findOne({_id: id}, function(err, user) {
+                    res.render("settings", {user: user});
+                })
+                
+            }
+    
+        })
+    } 
+    else if (focusIndex == 1){
+        var id = req.session.user._id
+        User.updateOne({_id: id},{email: focus}, function(err, result){
+
+            if(err){
+                console.log(err);
+            }
+            else{
+                User.findOne({_id: id}, function(err, user) {
+                    res.render("settings", {user: user});
+                })
+                
+            }
+    
+        })
     }
+    else if (focusIndex == 2){
+        var id = req.session.user._id
+        User.updateOne({_id: id},{first: focus}, function(err, result){
+
+            if(err){
+                console.log(err);
+            }
+            else{
+                User.findOne({_id: id}, function(err, user) {
+                    res.render("settings", {user: user});
+                })
+                
+            }
+    
+        })
+    }
+    else if (focusIndex == 3){
+        var id = req.session.user._id
+        User.updateOne({_id: id},{last: focus}, function(err, result){
+
+            if(err){
+                console.log(err);
+            }
+            else{
+                User.findOne({_id: id}, function(err, user) {
+                    res.render("settings", {user: user});
+                })
+                
+            }
+    
+        })
+    } 
+    
+    
 })
 
 
