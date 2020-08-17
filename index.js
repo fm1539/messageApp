@@ -79,8 +79,8 @@ app.get("/login", function(req, res){
     res.render("login")
 })
 
-app.get('/dashboard', function(req, res){
-    res.render("dashboard")
+app.get('/messages', function(req, res){
+    res.render("messages")
 })
 
 app.get("/settings", function(req,res){
@@ -115,7 +115,7 @@ app.post("/login", function(req,res){
                     req.session.user = foundUser;
                     console.log(req.session.user);
                     // req.session.user = email
-                    res.redirect("/dashboard")
+                    res.redirect("/messages")
                 
                 }
                 else{
@@ -151,7 +151,7 @@ app.post("/register", function(req, res){
     }
 })
 
-app.post("/update", function(req,res){
+app.post("/settings", function(req,res){
     var user = req.session.user
     
     var which = [
