@@ -1,0 +1,63 @@
+.left{
+  width: 50%;
+  margin-top: 150px;
+  text-align: center;
+  height: 300px;
+}
+
+.addtag{
+  text-align: center;
+}
+
+.right{
+  width: 50%;
+  float: right;
+  position: relative;
+  bottom: 321px;
+}
+
+.add, .current{
+  height: 400px;
+  width: 50%;
+  margin: 0 auto;
+  border: solid black;
+
+}
+
+.friends-item{
+  padding-left: 20px;
+}
+
+.current{
+  overflow-y: scroll;
+}
+
+.search{
+  margin-top: 20px;
+  width: 60%;
+}
+
+.searched-user{
+  height: 200px;
+}
+
+.searched-user-header{
+  display:inline-block;
+}
+
+.searched-user-header{
+padding-right: 50px;
+}
+
+.friend-requests{
+  position: relative;
+  left: 300px;
+  top: 200px;
+}
+
+.requests{
+  border: solid black;
+  height: 400px;
+  width: 49%;
+  overflow-y: scroll;
+}

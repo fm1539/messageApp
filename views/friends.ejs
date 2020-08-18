@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>My Friends</title>
+    <link rel="stylesheet" href="friends.css">
+    <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="index.html">Carousel</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+              <a class="nav-link" href="/messages">Messages</a>
+            </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/friends">My Friends</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/settings">Settings</a>
+          </li>
+        </ul>
+      
+      </div>
+  </nav>
+
+    <div class="left">
+      <h1 class="addtag">Add Friends</h1>
+      <div class="add">
+        <form class="" action="/search" method="POST">
+          <input name="searched_username" class="search" type="text">
+          <button type="submit">Search</button>
+        </form>
+      <div class="searched-user">
+        <h2 class="searched-user-header"><%= status %></h2>
+        <h2><%= str %></h2>
+        <form style="display:inline-block;" class="" action="/add" method="POST">
+          <button class="add-button" type="submit" name="button">Add</button>
+        </form>
+      </div>
+
+        <!--Use ejs to render searched username and hide and show add button with js. -->
+      </div>
+    </div>
+
+    <div class="right">
+      <h1 class="addtag">Friends</h1>
+      <div class="current">
+        <div class="friends-item">
+          <h2>John</h2>
+        </div>
+        <hr>
+        <div class="friends-item">
+          <h2>Carl</h2>
+        </div>
+        <hr>
+        <div class="friends-item">
+          <h2>Tom</h2>
+        </div>
+        <hr>
+      </div>
+    </div>
+
+    <div class="friend-requests">
+      <h1>Friend Requests</h1>
+
+      <div class="requests">
+        
+        <% requests.forEach(function(username) { %>
+          <div class="friends-item">
+            <input id="accepted_friend" style="visibility: hidden; z-index: -1;" name="accepted_friend" type="text">
+            <h2 id="userName"> <%= username %></h2>
+            <form action="/accept" method="POST">
+            <button onclick="accept_button();" type="submit" name="accept">Accept</button>
+          </form>
+          <form action="/decline" method="POST">
+            <button type="submit" name="decline">Decline</button>
+          </form>
+          </div>
+          <hr>
+       <% }) %>
+
+      </div>
+
+    </div>
+    <script>
+      function accept_button(){
+        document.getElementById("userName").innerHTML
+      }
+    </script>
+  </body>
+</html>
