@@ -6,13 +6,16 @@ const cookieParser = require("cookie-parser")
 var session = require("express-session")
 // const { v4: uuidv4 } = require('uuid');
 var session = require('client-sessions');
-const HTMLParser = require('node-html-parser')
+const cheerio = require('cheerio')
+const request = require('request')
+const url = require("url")
 
 const URI = "mongodb+srv://isfar:testing321@cluster0.jrwic.mongodb.net/data?retryWrites=true&w=majority"
 
 const app = express()
 
 app.use(express.static("public"))
+app.use('/views', express.static(__dirname + '/views'))
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(cookieParser())   //happened to be here
 // app.use(session({
@@ -100,10 +103,9 @@ app.get('/friends', function(req,res){
             console.log(err);
 
         }else {
-            res.render("friends", { status: "", str: "", requests: foundUser.requests})
+            res.render("friends", { status: "", str: "", requests: foundUser.requests, friends: foundUser.friends})
         }
     })
-    
 })
 
 app.get("/settings", function(req,res){
@@ -306,7 +308,7 @@ app.post("/search", function(req, res){
         else {
             if (foundUser){
                 if (foundUser.username == req.session.user.username){
-                    res.render("friends", { status: "That's your own username!", str: "", requests: []})
+                    res.render("friends", { status: "That's your own username!", str: "", requests: [], friends: []})
                 }
                 else{
                     Friends.updateOne({username: req.session.user.username},{searched_friends: req.body.searched_username}, function(err, result){
@@ -316,12 +318,12 @@ app.post("/search", function(req, res){
                         }
                 
                     })
-                    res.render("friends", { status: req.body.searched_username, str: "", requests: []})
+                    res.render("friends", { status: req.body.searched_username, str: "", requests: [], friends: []})
                 }
             }
             else{
                 var none = "No user with this username"
-                res.render("friends", { status: none, str: "", requests: []})
+                res.render("friends", { status: none, str: "", requests: [], friends: []})
             }
         }
     })
@@ -338,15 +340,19 @@ app.post("/add", function(req, res){
                 }
                 else{
                     if (sender.requests.includes(receiver.username)) {
-                        res.render("friends", {status : "", str: "This user has already sent you a request.", requests: []})
+                        res.render("friends", {status : "", str: "This user has already sent you a request.", requests: [], friends: []})
                     }
                     else if (receiver.requests.includes(sender.username)){
-                        res.render("friends", {status : "", str: "You have already sent this user a request.", requests: []})
+                        res.render("friends", {status : "", str: "You have already sent this user a request.", requests: [], friends: []})
+                    }
+
+                    else if (receiver.friends.includes(sender.username)) {
+                        res.render("friends", {status : "", str: "You are already friends.", requests: [], friends: []})
                     }
                     else {
                     receiver.requests.push(sender.username)
                     receiver.save()
-                    res.render("friends", {status : "", str: "", requests: []})
+                    res.render("friends", {status : "", str: "", requests: [], friends: []})
                     }
                 }
             })
@@ -355,9 +361,78 @@ app.post("/add", function(req, res){
     })
 })
 
-app.post('/accept', function(req, res){
-    var root = HTMLParser.parse('<h2 id="userName"><%= username %></h2>').text
-    console.log(root);
+app.get('/accept', function(req, res){
+    // const q = url.parse("http://localhost:3000/views/friend.ejs")
+    // console.log(q);
+    const req_index = req.query.ID
+    Friends.findOne({username: req.session.user.username}, function(err, foundReceiver) {
+        if (err) {
+            console.log(err);
+        } else {
+            foundReceiver.friends.push(foundReceiver.requests[req_index])
+            Friends.findOne({username: foundReceiver.requests[req_index]}, function(err, foundSender){
+                if (err) {
+                    console.log(err);
+                } else{
+                    foundSender.friends.push(req.session.user.username) 
+                    foundSender.save()
+                }
+            })
+            foundReceiver.requests.splice(req_index, req_index+1)
+            foundReceiver.save()
+            
+        }
+    })
+    
+    res.redirect('/friends')
+})
+
+app.get('/decline', function (req, res) {
+    const req_index = req.query.ID
+    Friends.findOne({username: req.session.user.username}, function(err, foundUser) {
+        if (err) {
+            console.log(err);
+        } else{
+            foundUser.requests.splice(req_index, req_index+1)
+            foundUser.save()
+        }
+    })
+    res.redirect('/friends')
+})
+
+app.get('/remove', function (req, res) {
+    const friend_index = req.query.ID
+    Friends.findOne({username: req.session.user.username}, function(err, remover){
+        if (err){
+            console.log(err);
+        }
+        else {
+            
+            Friends.findOne({username: remover.friends[friend_index]}, function(err, constant) {
+                if (err) {
+                    console.log(err);
+                }
+                else{
+                    var found = false
+                    var i = 0
+                    while (!found && i < found.length) {
+                        if (constant.friends[i] == req.session.user.username){
+                            found = true
+                        }
+                        else {
+                            i++
+                        }
+                    }
+                    console.log(i-1);
+                    constant.friends.splice(i, i+1)
+                    constant.save()
+                }
+            })
+            remover.friends.splice(friend_index, friend_index+1)
+            remover.save()
+        }
+    })
+   res.redirect('/friends') 
 })
 
 app.listen(3000 || process.env.Port, function(){

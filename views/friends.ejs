@@ -51,47 +51,46 @@
     <div class="right">
       <h1 class="addtag">Friends</h1>
       <div class="current">
+        <% for (var i = 0; i < friends.length; i++) { %>
         <div class="friends-item">
-          <h2>John</h2>
+          <h2><%= friends[i] %></h2>
+          <a href="/remove?ID=<%= i %>">X</a>
         </div>
         <hr>
-        <div class="friends-item">
-          <h2>Carl</h2>
-        </div>
-        <hr>
-        <div class="friends-item">
-          <h2>Tom</h2>
-        </div>
-        <hr>
+        <% } %>
       </div>
     </div>
 
     <div class="friend-requests">
       <h1>Friend Requests</h1>
 
+    
+
       <div class="requests">
-        
-        <% requests.forEach(function(username) { %>
+        <% for (var i = 0; i < requests.length; i++) {%>
+          
           <div class="friends-item">
-            <input id="accepted_friend" style="visibility: hidden; z-index: -1;" name="accepted_friend" type="text">
-            <h2 id="userName"> <%= username %></h2>
-            <form action="/accept" method="POST">
-            <button onclick="accept_button();" type="submit" name="accept">Accept</button>
-          </form>
-          <form action="/decline" method="POST">
-            <button type="submit" name="decline">Decline</button>
-          </form>
+            <input class="accepted_friend" style="visibility: hidden; z-index: -1;" name="accepted_friend" type="text">
+            <h2 id="userName"> <%= requests[i] %></h2>
+            <a href="/accept?ID=<%= i %>"> 
+           <button id="<%= i %>" onclick="accept_button();" type="submit" name="accept">Accept</button></form></a>
+          </a>
+          <a href="/decline?ID=<%= i %>">
+            <button id="<%= i %>" type="submit" name="decline">Decline</button>
+          </a>
           </div>
           <hr>
-       <% }) %>
+       <% } %>
 
       </div>
 
     </div>
-    <script>
+    <!-- <script>
       function accept_button(){
-        document.getElementById("userName").innerHTML
+        console.log(document.getElementById("userName").innerHTML)
+        console.log("<%= i %>")
       }
-    </script>
+    </script> -->
   </body>
+  <script type="text/javascript" src="file:///C:/Users/farha/Desktop/messageApp/friendrequest.js"></script>
 </html>
