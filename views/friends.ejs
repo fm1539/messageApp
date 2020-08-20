@@ -32,16 +32,17 @@
     <div class="left">
       <h1 class="addtag">Add Friends</h1>
       <div class="add">
-        <form class="" action="/search" method="POST">
-          <input name="searched_username" class="search" type="text">
-          <button type="submit">Search</button>
-        </form>
+        <!-- <form class="" action="/search" method="POST"> -->
+          <input id="search-input" name="searched_username" type="text">
+          <a id="search" href="/friends" onclick="searched();"><button type="submit">Search</button></a>
+        <!-- </form> -->
       <div class="searched-user">
-        <h2 class="searched-user-header"><%= status %></h2>
+        <h2 class="searched-user-header"><%= searched_friend  %></h2> 
+        <a id="close-x" href="/remove_search" style="visibility: hidden;">X</a>
         <h2><%= str %></h2>
-        <form style="display:inline-block;" class="" action="/add" method="POST">
-          <button class="add-button" type="submit" name="button">Add</button>
-        </form>
+        <!-- <form style="display:inline-block;" class="" action="/add" method="POST"> -->
+          <a id="add" href="/friends" onclick="add();" style="visibility: hidden;"><button class="add-button" type="submit" name="button">Add</button></a>
+          <!-- </form> -->
       </div>
 
         <!--Use ejs to render searched username and hide and show add button with js. -->
@@ -92,5 +93,38 @@
       }
     </script> -->
   </body>
+  <script>
+    
+    
+    var username = document.querySelector(".searched-user-header").innerHTML
+    var add_anchor = document.querySelector("#add")
+    var close_x = document.querySelector('#close-x')
+    if (username != ""){
+      add_anchor.style.visibility = "visible"
+      close_x.style.visibility = "visible"
+    }
+
+    function searched(){
+      var search_anchor = document.querySelector("#search")
+      var search_input = document.getElementById("search-input").value
+      var username = document.querySelector(".searched-user-header").innerHTML
+      var add_anchor = document.querySelector("#add")
+      var close_x = document.querySelector("#close-x")
+      if (username == ""){
+        add_anchor.style.visibility = "visible"
+        close_x.style.visibility = "visible"
+      }
+      console.log(search_anchor);
+      console.log(search_input);
+      search_anchor.href = "/search?ID=" + search_input
+    }
+
+    function add(){
+      var add_anchor = document.querySelector("#add")
+      var username = document.querySelector(".searched-user-header").innerHTML
+      add_anchor.href = "/add?ID=" + username
+    }
+
+  </script>
   <script type="text/javascript" src="file:///C:/Users/farha/Desktop/messageApp/friendrequest.js"></script>
 </html>

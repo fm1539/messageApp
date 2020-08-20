@@ -2,22 +2,22 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
 const ejs = require("ejs")
-const cookieParser = require("cookie-parser")
 var session = require("express-session")
 // const { v4: uuidv4 } = require('uuid');
 var session = require('client-sessions');
-const cheerio = require('cheerio')
-const request = require('request')
-const url = require("url")
+
 
 const URI = "mongodb+srv://isfar:testing321@cluster0.jrwic.mongodb.net/data?retryWrites=true&w=majority"
 
 const app = express()
 
+
+
+
 app.use(express.static("public"))
 app.use('/views', express.static(__dirname + '/views'))
 app.use(bodyParser.urlencoded({extended: true}))
-app.use(cookieParser())   //happened to be here
+// app.use(cookieParser())   //happened to be here
 // app.use(session({
 //     genid: function(req) {
 //       return uuidv4() // use UUIDs for session IDs
@@ -103,7 +103,7 @@ app.get('/friends', function(req,res){
             console.log(err);
 
         }else {
-            res.render("friends", { status: "", str: "", requests: foundUser.requests, friends: foundUser.friends})
+            res.render("friends", { status: "", str: "", requests: foundUser.requests, friends: foundUser.friends, searched_friend: foundUser.searched_friends})
         }
     })
 })
@@ -300,36 +300,94 @@ app.post("/settings", function(req,res){
     
 })
 
-app.post("/search", function(req, res){
-    User.findOne({username: req.body.searched_username}, function(err, foundUser){
+// app.post("/search", function(req, res){
+//     User.findOne({username: req.body.searched_username}, function(err, foundUser){
+//         if (err) {
+//             console.log(err);
+//         } 
+//         else {
+//             if (foundUser){
+//                 if (foundUser.username == req.session.user.username){
+//                     res.render("friends", { status: "That's your own username!", str: "", requests: [], friends: []})
+//                 }
+//                 else{
+//                     Friends.updateOne({username: req.session.user.username},{searched_friends: req.body.searched_username}, function(err, result){
+
+//                         if(err){
+//                             console.log(err);
+//                         }
+                
+//                     })
+//                     res.render("friends", { status: req.body.searched_username, str: "", requests: [], friends: []})
+//                 }
+//             }
+//             else{
+//                 var none = "No user with this username"
+//                 res.render("friends", { status: none, str: "", requests: [], friends: []})
+//             }
+//         }
+//     })
+// })s
+app.get("/search", function(req, res){
+    const user_name = req.query.ID
+    User.findOne({username: user_name}, function(err, foundUser) {
         if (err) {
             console.log(err);
-        } 
-        else {
+        } else {
             if (foundUser){
                 if (foundUser.username == req.session.user.username){
-                    res.render("friends", { status: "That's your own username!", str: "", requests: [], friends: []})
+                    //this is your own username. Use flash 
                 }
                 else{
-                    Friends.updateOne({username: req.session.user.username},{searched_friends: req.body.searched_username}, function(err, result){
-
+                    Friends.updateOne({username: req.session.user.username},{searched_friends: user_name}, function(err, result){
+                
                         if(err){
                             console.log(err);
-                        }
-                
+                         }
+                                
                     })
-                    res.render("friends", { status: req.body.searched_username, str: "", requests: [], friends: []})
-                }
-            }
-            else{
-                var none = "No user with this username"
-                res.render("friends", { status: none, str: "", requests: [], friends: []})
-            }
+                                }
+                            }
+            res.redirect("/friends")
         }
     })
 })
 
-app.post("/add", function(req, res){
+
+// app.post("/add", function(req, res){
+//     Friends.findOne({username: req.session.user.username}, function(err, sender){
+//         if (err) {
+//             console.log(err);
+//         } else {
+//             Friends.findOne({username: sender.searched_friends}, function(err, receiver){
+//                 if (err){
+//                     console.log(err);
+//                 }
+//                 else{
+//                     if (sender.requests.includes(receiver.username)) {
+//                         res.render("friends", {status : "", str: "This user has already sent you a request.", requests: [], friends: [], searched_friend: ""})
+//                     }
+//                     else if (receiver.requests.includes(sender.username)){
+//                         res.render("friends", {status : "", str: "You have already sent this user a request.", requests: [], friends: [],  searched_friend: ""})
+//                     }
+
+//                     else if (receiver.friends.includes(sender.username)) {
+//                         res.render("friends", {status : "", str: "You are already friends.", requests: [], friends: [],  searched_friend: ""})
+//                     }
+//                     else {
+//                     receiver.requests.push(sender.username)
+//                     receiver.save()
+//                     res.render("friends", {status : "", str: "", requests: [], friends: [],  searched_friend: foundUser.searched_friends})
+//                     }
+//                 }
+//             })
+            
+//         }
+//     })
+// })
+
+app.get("/add", function(req, res){
+    constusername = req.query.ID
     Friends.findOne({username: req.session.user.username}, function(err, sender){
         if (err) {
             console.log(err);
@@ -340,23 +398,38 @@ app.post("/add", function(req, res){
                 }
                 else{
                     if (sender.requests.includes(receiver.username)) {
-                        res.render("friends", {status : "", str: "This user has already sent you a request.", requests: [], friends: []})
+                        //"This user has already sent you a request." use flash
                     }
                     else if (receiver.requests.includes(sender.username)){
-                        res.render("friends", {status : "", str: "You have already sent this user a request.", requests: [], friends: []})
+                        //"You have already sent this user a request.", use flash
                     }
 
                     else if (receiver.friends.includes(sender.username)) {
-                        res.render("friends", {status : "", str: "You are already friends.", requests: [], friends: []})
+                    // "You are already friends.", 
                     }
                     else {
                     receiver.requests.push(sender.username)
                     receiver.save()
-                    res.render("friends", {status : "", str: "", requests: [], friends: []})
-                    }
+                    sender.searched_friends = ""
+                    sender.save()
+                    res.redirect("/friends")
+                }
                 }
             })
             
+        }
+    })
+})
+
+app.get("/remove_search", function(req,res){
+    Friends.findOne({username: req.session.user.username}, function(err,foundUser){
+        if (err){
+            console.log(err);
+        }
+        else{
+            foundUser.searched_friends = ""
+            foundUser.save()
+            res.redirect('/friends')
         }
     })
 })
