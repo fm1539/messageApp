@@ -20,6 +20,13 @@ body {
     margin-bottom: 0;
   }
 
+  .message{
+    padding: 10px;
+	  margin-bottom: 15px;
+	  background-color: var(--light-color);
+	  border-radius: 5px;
+	  overflow-wrap: break-word;
+  }
   
   /*
    * Navbar

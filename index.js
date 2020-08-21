@@ -2,17 +2,18 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
 const ejs = require("ejs")
+const http = require('http');
 var session = require("express-session")
 // const { v4: uuidv4 } = require('uuid');
 var session = require('client-sessions');
-
+const socketio = require("socket.io")
+const moment = require('moment')
 
 const URI = "mongodb+srv://isfar:testing321@cluster0.jrwic.mongodb.net/data?retryWrites=true&w=majority"
 
 const app = express()
-
-
-
+const server = http.createServer(app)
+const io = socketio(server);
 
 app.use(express.static("public"))
 app.use('/views', express.static(__dirname + '/views'))
@@ -24,6 +25,8 @@ app.use(bodyParser.urlencoded({extended: true}))
 //     },
 //     secret: 'keyboard cat'
 //   }))
+
+
 
 app.use(session({
     cookieName: 'session',
@@ -93,6 +96,27 @@ app.get("/login", function(req, res){
 })
 
 app.get('/messages', function(req, res){
+    io.on('connection', socket => {
+        // Broadcast when user connects
+        // socket.broadcast.emit('message',  req.session.user.username + ' has joined the chat'));
+    
+        // // Broadcast when user disconnects
+        // socket.on('disconnect', function() {
+        //     io.emit('message', req.session.user.username + ' has left the chat');
+        // });
+    
+        //Listen for chatMessage
+        socket.on('chatMessage', function(msg) {
+            console.log(msg);
+            console.log(req.session.user.username);
+            const message_info = {
+                username: req.session.user.username,
+                text: msg,
+                time: moment().format('h:mm a')
+            }
+            io.emit("message", message_info)
+        })
+    });
     res.render("messages")
 })
 
@@ -505,9 +529,9 @@ app.get('/remove', function (req, res) {
             remover.save()
         }
     })
-   res.redirect('/friends') 
+   res.redirect('/friends')
 })
 
-app.listen(3000 || process.env.Port, function(){
+server.listen(3000 || process.env.Port, function(){
     console.log("server on 3000");
 })
