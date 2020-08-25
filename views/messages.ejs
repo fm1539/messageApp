@@ -9,10 +9,36 @@
       integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk="
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css" />
     <title>ChatCord App</title>
   </head>
   <body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="index.html">Carousel</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+              <a class="nav-link" href="/messages">Messages</a>
+            </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/friends">My Friends</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="/settings">Settings</a>
+          </li>
+        </ul>
+      </div>
+  </nav>
+  <div id="add-gc" class="hide">
+    <button onclick="close1();">X</button>
+    <label for="gcname">Chat Name</label>
+    <input type="text" name="gcname" placeholder="Enter Chat Name">
+    <button onclick="create();">Create</button>
+  </div>
     <div class="chat-container">
       <header class="chat-header">
         <h1><i class="fas fa-smile"></i> ChatCord</h1>
@@ -21,7 +47,19 @@
       <main class="chat-main">
         <div class="chat-sidebar">
           <h3><i class="fas fa-comments"></i> Room Name:</h3>
-          <h2 id="room-name"></h2>
+          <button onclick="openPopup();"><i class="fa fa-plus" aria-hidden="true"></i></button>
+          <div id="room-div">
+          <a href="">
+          
+            <h2 id="room-name">Room 1</h2>
+          
+        </a>
+        <a href="">
+          
+          <h2 id="room-name">Room 1</h2>
+        
+      </a>
+    </div>
           <h3><i class="fas fa-users"></i> Users</h3>
           <ul id="users"></ul>
         </div>
@@ -48,5 +86,29 @@
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha512-v8ng/uGxkge3d1IJuEo6dJP8JViyvms0cly9pnbfRxT6/31c3dRWxIiwGnMSWwZjHKOuY3EVmijs7k1jz/9bLA==" crossorigin="anonymous"></script>
     <script src="js/main.js"></script>
+    <script>
+    
+    var popup = document.getElementById('add-gc');
+
+    function openPopup(){
+      popup.classList.remove("hide")
+      popup.classList.add("show")
+    }
+
+    function close1(){
+        for (var i = 0; i < popup.classList.length; i++){
+            popup.classList.remove(popup.classList[i]);
+        }
+        popup.classList.add("hide")
+        
+    }
+
+    function create(){
+      const a_tag = document.createElement('a');
+      a_tag.innerHTML = '<h2 id="room-name">Room 1</h2>'
+      const div = document.querySelector('#room-div')
+      div.appendChild(a_tag)
+    }
+    </script>
   </body>
 </html>

@@ -3,8 +3,14 @@ const chatForm = document.getElementById('chat-form')  //collect form id
 const chatMessages = document.querySelector(".chat-messages")
 const socket = io()
 
+const { ID } = Qs.parse(location.search, {
+    ignoreQueryPrefix: true
+})
+
+socket.emit("join", { ID })
+
 //Message from Server
-socket.on('message', message => {
+socket.on('chatMessage', message => {
     outputMessage(message);
     chatMessages.scrollTop = chatMessages.scrollHeight
 })

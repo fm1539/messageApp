@@ -18,7 +18,19 @@ body {
 	font-family: 'Roboto', sans-serif;
 	font-size: 16px;
 	background: var(--light-color);
-	margin: 20px;
+}
+
+.show{
+	visibility: visible;
+	height: 400px;
+	width: 600px;
+	background-color: #5cb85c;
+	z-index: 1;
+	position: absolute;
+}
+
+.hide{
+	visibility: hidden;
 }
 
 ul {
@@ -41,9 +53,9 @@ a {
 /* Chat Page */
 
 .chat-container {
+	margin-top: 50px;
 	max-width: 1100px;
 	background: #fff;
-	margin: 30px auto;
 	overflow: hidden;
 }
 

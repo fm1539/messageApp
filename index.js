@@ -8,7 +8,8 @@ var session = require("express-session")
 var session = require('client-sessions');
 const socketio = require("socket.io")
 const moment = require('moment')
-
+const { User, newSocket } = require("./utils/users.js")
+const Friends = require('./utils/friends.js')
 const URI = "mongodb+srv://isfar:testing321@cluster0.jrwic.mongodb.net/data?retryWrites=true&w=majority"
 
 const app = express()
@@ -25,7 +26,6 @@ app.use(bodyParser.urlencoded({extended: true}))
 //     },
 //     secret: 'keyboard cat'
 //   }))
-
 
 
 app.use(session({
@@ -59,29 +59,48 @@ const connectDB = async() => {
 
 connectDB()
 
-const userSchema = new mongoose.Schema({
-    username: String,
-    first: String,
-    last: String,
-    email: String,
-    password: String
-})
-
-const friendsSchema = new mongoose.Schema({
-    username: String,
-    requests: [String],
-    friends: [String],
-    searched_friends: String
-})
 
 
 const logSchema = new mongoose.Schema({
     email: String
 })
 
-const User = new mongoose.model("User", userSchema)
+// const User = new mongoose.model("User", userSchema)
 const Log = new mongoose.model("Log", logSchema)
-const Friends = new mongoose.model("Friends", friendsSchema)
+
+
+io.on('connection', socket => {
+    // Broadcast when user connects
+    // socket.broadcast.emit('message',  req.session.user.username + ' has joined the chat'));
+
+    // // Broadcast when user disconnects
+    // socket.on('disconnect', function() {
+    //     io.emit('message', req.session.user.username + ' has left the chat');
+    // });
+
+    //Listen for chatMessage
+    socket.on("join", ({ ID }) => {
+        newSocket(ID, socket.id)
+        console.log(ID);
+    })
+
+    socket.on('chatMessage', function(msg) {
+
+        User.findOne( {socketid: socket.id}, function(err, foundUser) {
+            if (err) {
+                console.log(err);
+            } else {
+                const message_info = {
+                    username: foundUser.username,
+                    text: msg,
+                    time: moment().format('h:mm a')
+                }
+                io.emit("chatMessage", message_info)
+            }
+        })
+    } )
+})
+
 
 app.get('/', function(req, res){
     res.render("index")
@@ -96,27 +115,12 @@ app.get("/login", function(req, res){
 })
 
 app.get('/messages', function(req, res){
-    io.on('connection', socket => {
-        // Broadcast when user connects
-        // socket.broadcast.emit('message',  req.session.user.username + ' has joined the chat'));
-    
-        // // Broadcast when user disconnects
-        // socket.on('disconnect', function() {
-        //     io.emit('message', req.session.user.username + ' has left the chat');
-        // });
-    
-        //Listen for chatMessage
-        socket.on('chatMessage', function(msg) {
-            console.log(msg);
-            console.log(req.session.user.username);
-            const message_info = {
-                username: req.session.user.username,
-                text: msg,
-                time: moment().format('h:mm a')
-            }
-            io.emit("message", message_info)
-        })
-    });
+    res.render("messages")
+})
+
+app.get('/userinfo', function(req,res){
+    const email = req.query.ID
+    console.log(email);
     res.render("messages")
 })
 
@@ -133,7 +137,7 @@ app.get('/friends', function(req,res){
 })
 
 app.get("/settings", function(req,res){
-    // console.log(req.session.user.email);
+    console.log(req.session.user);
     User.findOne({email: req.session.user.email}, function(err, foundUser){
         if (err){
             console.log(err);
@@ -146,7 +150,6 @@ app.get("/settings", function(req,res){
     })
     
 })
-
 
 app.post("/login", function(req,res){
     const email = req.body.email
@@ -204,7 +207,8 @@ app.post("/register", function(req, res){
                                     first: req.body.first,
                                     last: req.body.last,
                                     email: req.body.email,
-                                    password: req.body.password
+                                    password: req.body.password,
+                                    socketid: ""
                                 })
                                 const newFriends = new Friends({
                                     username: req.body.username,
@@ -239,7 +243,7 @@ app.post("/register", function(req, res){
 
 app.post("/settings", function(req,res){
     var user = req.session.user
-    
+    console.log(user);
     var which = [
         req.body.username,
         req.body.email,
