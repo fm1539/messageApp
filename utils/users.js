@@ -6,18 +6,21 @@ const userSchema = new mongoose.Schema({
     last: String,
     email: String,
     password: String,
-    socketid: String
+    socketid: String,
+    chats: [String]
 })
 
 const User = new mongoose.model("User", userSchema)
 
-function newSocket(email, id) {
-    User.findOne( {email: email}, function(err, foundUser) {
-        if (err) {
+
+function newSocket(username, id) {
+    
+    User.findOne( {username: username}, function(err, foundUser) {
+        if (err) { 
             console.log(err);
         } else {
             foundUser.socketid =  id
-            foundUser.save()   
+            foundUser.save()
         }
     } )
 }

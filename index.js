@@ -9,12 +9,13 @@ var session = require('client-sessions');
 const socketio = require("socket.io")
 const moment = require('moment')
 const { User, newSocket } = require("./utils/users.js")
-const Friends = require('./utils/friends.js')
-const URI = "mongodb+srv://isfar:testing321@cluster0.jrwic.mongodb.net/data?retryWrites=true&w=majority"
-
+// const { Friends } = require('./utils/friends.js')
+const {Friends} = require('./utils/friends.js')
+const {Chat} = require('./utils/chat.js')
 const app = express()
 const server = http.createServer(app)
 const io = socketio(server);
+const URI = "mongodb+srv://isfar:testing321@cluster0.jrwic.mongodb.net/data?retryWrites=true&w=majority"
 
 app.use(express.static("public"))
 app.use('/views', express.static(__dirname + '/views'))
@@ -59,8 +60,6 @@ const connectDB = async() => {
 
 connectDB()
 
-
-
 const logSchema = new mongoose.Schema({
     email: String
 })
@@ -79,9 +78,33 @@ io.on('connection', socket => {
     // });
 
     //Listen for chatMessage
-    socket.on("join", ({ ID }) => {
-        newSocket(ID, socket.id)
-        console.log(ID);
+    socket.on("join", ( username ) => {
+        newSocket(username, socket.id)
+        // console.log(ID);
+        // console.log(socket.id);
+    })
+
+    socket.on("create-room", ({ gcname, username }) => {
+        console.log(gcname);
+        console.log("working");
+        User.findOne({username: username}, function(err, foundUser){
+            if (err){
+                console.log(err);
+            }else{
+                foundUser.chats.push(gcname)
+                foundUser.save()
+            }
+        })
+        const newChat = new Chat({
+            chatname: gcname,
+            usernames: [username],
+            messages: []    
+        })
+        newChat.save(function(err) {
+            if (err) {
+                console.log(err);
+            }
+        })
     })
 
     socket.on('chatMessage', function(msg) {
@@ -115,7 +138,27 @@ app.get("/login", function(req, res){
 })
 
 app.get('/messages', function(req, res){
-    res.render("messages")
+    // User.findOne( {email: req.query.ID}, function(err, foundUser){
+    //     if (err){
+    //         console.log(err);
+    //     }
+    //     else{
+    //         req.session.user = foundUser
+    //         // console.log(req.session.user)
+    //     }
+    // })
+    // console.log(req.session.user);
+    User.findOne( {username: req.session.user.User.username} , function(err, foundUser) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(foundUser);
+            list = foundUser.chats
+            console.log(list)
+           }
+        res.render("messages", {chats: list, session_user: req.session.user.User})
+    }
+)
 })
 
 app.get('/userinfo', function(req,res){
@@ -125,7 +168,7 @@ app.get('/userinfo', function(req,res){
 })
 
 app.get('/friends', function(req,res){
-    const currentUsername = req.session.user.username
+    const currentUsername = req.session.user.User.username
     Friends.findOne({username: currentUsername}, function(err, foundUser) {
         if (err) {
             console.log(err);
@@ -134,11 +177,15 @@ app.get('/friends', function(req,res){
             res.render("friends", { status: "", str: "", requests: foundUser.requests, friends: foundUser.friends, searched_friend: foundUser.searched_friends})
         }
     })
+    // const foundUser = req.session.user.Friends
+    // console.log(req.session.user);
+    // console.log(foundUser);
+    // res.render("friends", { status: "", str: "", requests: foundUser.requests, friends: foundUser.friends, searched_friend: foundUser.searched_friends})
+    
 })
 
 app.get("/settings", function(req,res){
-    console.log(req.session.user);
-    User.findOne({email: req.session.user.email}, function(err, foundUser){
+    User.findOne({email: req.session.user.User.email}, function(err, foundUser){
         if (err){
             console.log(err);
         }
@@ -155,18 +202,16 @@ app.post("/login", function(req,res){
     const email = req.body.email
     const password = req.body.password
     // req.session.id = req.session.id || uuidv4()
-    User.findOne({email: email}, function(err, foundUser){
+    User.findOne({email: email}, function(err, User){
         if (err){
             console.log(err);
         }
         else{
-            if (foundUser){
-                if (foundUser.password === password)
+            if (User){
+                if (User.password === password)
                 {
-                    req.session.user = foundUser;
-                    // req.session.user = email
+                    req.session.user = {User};
                     res.redirect("/messages")
-                
                 }
                 else{
                     res.send("ERROR: Email or Password is incorrect")
@@ -208,7 +253,8 @@ app.post("/register", function(req, res){
                                     last: req.body.last,
                                     email: req.body.email,
                                     password: req.body.password,
-                                    socketid: ""
+                                    socketid: "",
+                                    chats: []
                                 })
                                 const newFriends = new Friends({
                                     username: req.body.username,
@@ -242,7 +288,7 @@ app.post("/register", function(req, res){
 })
 
 app.post("/settings", function(req,res){
-    var user = req.session.user
+    var user = req.session.user.User
     console.log(user);
     var which = [
         req.body.username,
@@ -261,14 +307,17 @@ app.post("/settings", function(req,res){
     }
 
     if(focusIndex == 0){
-        var id = req.session.user._id
+        var id = req.session.user.User._id
         User.updateOne({_id: id},{username: focus}, function(err, result){
 
             if(err){
                 console.log(err);
+
             }
             else{
+                req.session.user.User.username = focus   //update session if user chooses to update his info
                 User.findOne({_id: id}, function(err, user) {
+                    
                     res.render("settings", {user: user});
                 })
                 
@@ -277,7 +326,7 @@ app.post("/settings", function(req,res){
         })
     } 
     else if (focusIndex == 1){
-        var id = req.session.user._id
+        var id = req.session.user.User._id
         User.updateOne({_id: id},{email: focus}, function(err, result){
 
             if(err){
@@ -293,7 +342,7 @@ app.post("/settings", function(req,res){
         })
     }
     else if (focusIndex == 2){
-        var id = req.session.user._id
+        var id = req.session.user.User._id
         User.updateOne({_id: id},{first: focus}, function(err, result){
 
             if(err){
@@ -309,7 +358,7 @@ app.post("/settings", function(req,res){
         })
     }
     else if (focusIndex == 3){
-        var id = req.session.user._id
+        var id = req.session.user.User._id
         User.updateOne({_id: id},{last: focus}, function(err, result){
 
             if(err){
@@ -363,11 +412,11 @@ app.get("/search", function(req, res){
             console.log(err);
         } else {
             if (foundUser){
-                if (foundUser.username == req.session.user.username){
+                if (foundUser.username == req.session.user.User.username){
                     //this is your own username. Use flash 
                 }
                 else{
-                    Friends.updateOne({username: req.session.user.username},{searched_friends: user_name}, function(err, result){
+                    Friends.updateOne({username: req.session.user.User.username},{searched_friends: user_name}, function(err, result){
                 
                         if(err){
                             console.log(err);
@@ -416,7 +465,7 @@ app.get("/search", function(req, res){
 
 app.get("/add", function(req, res){
     constusername = req.query.ID
-    Friends.findOne({username: req.session.user.username}, function(err, sender){
+    Friends.findOne({username: req.session.user.User.username}, function(err, sender){
         if (err) {
             console.log(err);
         } else {
@@ -450,7 +499,7 @@ app.get("/add", function(req, res){
 })
 
 app.get("/remove_search", function(req,res){
-    Friends.findOne({username: req.session.user.username}, function(err,foundUser){
+    Friends.findOne({username: req.session.user.User.username}, function(err,foundUser){
         if (err){
             console.log(err);
         }
@@ -466,7 +515,7 @@ app.get('/accept', function(req, res){
     // const q = url.parse("http://localhost:3000/views/friend.ejs")
     // console.log(q);
     const req_index = req.query.ID
-    Friends.findOne({username: req.session.user.username}, function(err, foundReceiver) {
+    Friends.findOne({username: req.session.user.User.username}, function(err, foundReceiver) {
         if (err) {
             console.log(err);
         } else {
@@ -475,7 +524,7 @@ app.get('/accept', function(req, res){
                 if (err) {
                     console.log(err);
                 } else{
-                    foundSender.friends.push(req.session.user.username) 
+                    foundSender.friends.push(req.session.user.User.username) 
                     foundSender.save()
                 }
             })
@@ -490,7 +539,7 @@ app.get('/accept', function(req, res){
 
 app.get('/decline', function (req, res) {
     const req_index = req.query.ID
-    Friends.findOne({username: req.session.user.username}, function(err, foundUser) {
+    Friends.findOne({username: req.session.user.User.username}, function(err, foundUser) {
         if (err) {
             console.log(err);
         } else{
@@ -503,7 +552,7 @@ app.get('/decline', function (req, res) {
 
 app.get('/remove', function (req, res) {
     const friend_index = req.query.ID
-    Friends.findOne({username: req.session.user.username}, function(err, remover){
+    Friends.findOne({username: req.session.user.User.username}, function(err, remover){
         if (err){
             console.log(err);
         }
@@ -517,7 +566,7 @@ app.get('/remove', function (req, res) {
                     var found = false
                     var i = 0
                     while (!found && i < found.length) {
-                        if (constant.friends[i] == req.session.user.username){
+                        if (constant.friends[i] == req.session.user.User.username){
                             found = true
                         }
                         else {

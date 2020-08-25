@@ -36,12 +36,13 @@
   <div id="add-gc" class="hide">
     <button onclick="close1();">X</button>
     <label for="gcname">Chat Name</label>
-    <input type="text" name="gcname" placeholder="Enter Chat Name">
-    <button onclick="create();">Create</button>
+    <input type="text" id="gcname" name="gcname" placeholder="Enter Chat Name">
+    <button id="create-btn">Create</button>
   </div>
     <div class="chat-container">
       <header class="chat-header">
         <h1><i class="fas fa-smile"></i> ChatCord</h1>
+        <h1 id="username"><%= session_user.username %></h1>
         <a href="index.html" class="btn">Leave Room</a>
       </header>
       <main class="chat-main">
@@ -49,16 +50,13 @@
           <h3><i class="fas fa-comments"></i> Room Name:</h3>
           <button onclick="openPopup();"><i class="fa fa-plus" aria-hidden="true"></i></button>
           <div id="room-div">
-          <a href="">
+         <% for (var i = 0; i < chats.length; i++) { %>   
+          <a href="/messages">
           
-            <h2 id="room-name">Room 1</h2>
+            <h2 id="room-name"> <%= chats[i] %> </h2>
           
         </a>
-        <a href="">
-          
-          <h2 id="room-name">Room 1</h2>
-        
-      </a>
+        <% } %>
     </div>
           <h3><i class="fas fa-users"></i> Users</h3>
           <ul id="users"></ul>
@@ -86,29 +84,5 @@
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha512-v8ng/uGxkge3d1IJuEo6dJP8JViyvms0cly9pnbfRxT6/31c3dRWxIiwGnMSWwZjHKOuY3EVmijs7k1jz/9bLA==" crossorigin="anonymous"></script>
     <script src="js/main.js"></script>
-    <script>
-    
-    var popup = document.getElementById('add-gc');
-
-    function openPopup(){
-      popup.classList.remove("hide")
-      popup.classList.add("show")
-    }
-
-    function close1(){
-        for (var i = 0; i < popup.classList.length; i++){
-            popup.classList.remove(popup.classList[i]);
-        }
-        popup.classList.add("hide")
-        
-    }
-
-    function create(){
-      const a_tag = document.createElement('a');
-      a_tag.innerHTML = '<h2 id="room-name">Room 1</h2>'
-      const div = document.querySelector('#room-div')
-      div.appendChild(a_tag)
-    }
-    </script>
   </body>
 </html>
