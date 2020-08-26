@@ -1,5 +1,6 @@
 var popup = document.getElementById('add-gc');
-  
+
+var add_users = document.getElementById('add-users')
 
 function openPopup(){
     popup.classList.remove("hide")
@@ -10,16 +11,50 @@ function close1(){
     for (var i = 0; i < popup.classList.length; i++){
         popup.classList.remove(popup.classList[i]);
     }
-    popup.classList.add("hide")
-        
+    popup.classList.add("hide")        
+}
+
+function openAddUsers(){
+    add_users.classList.remove("hide")
+    add_users.classList.add("show")
 }
 
 
 
+const checkbox = document.querySelectorAll('.friends-list')
 const chatForm = document.getElementById('chat-form')  //collect form id
 const chatMessages = document.querySelector(".chat-messages")
 const socket = io()
 const username = document.querySelector("#username").innerHTML
+const addButton = document.getElementById("addBtn")
+const pre_add = document.getElementById("preAdd")
+
+
+addButton.addEventListener("click", function(){
+    var arr = []
+    for (var i = 0; i < checkbox.length; i++){
+        if (checkbox[i].checked){
+            arr.push(checkbox[i].id)
+        }
+    }
+    const chatRoom = Qs.parse(location.search, {
+        ignoreQueryPrefix: true
+    })
+    console.log(chatRoom);
+
+    socket.emit("add-user", ({arr, chatRoom}))
+})
+
+// const chatRoom = Qs.parse(location.search, {
+//     ignoreQueryPrefix: true
+// })
+// if (chatRoom == {}) {
+//     console.log("working");
+//     pre_add.style.visibility = "hidden"
+// }else{
+//     pre_add.style.visibility = "visible"
+// }
+
 
 socket.emit("join", username)
 

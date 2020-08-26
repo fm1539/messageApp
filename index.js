@@ -107,6 +107,35 @@ io.on('connection', socket => {
         })
     })
 
+    socket.on('add-user', ({arr, chatRoom}) => {
+        for (var i = 0; i < arr.length; i++) {
+            console.log("i = " + i);
+            console.log(arr);
+            console.log(arr[i]);
+            var username = arr[i]
+            User.findOne({ username: username}, function(err, foundUser) {
+                console.log("i = " + i);
+                if (err){
+                    console.log(err);
+                }
+                else{
+                    console.log("i = " + i);
+                    foundUser.chats.push(chatRoom.chat_id)
+                    foundUser.save()
+                    Chat.findOne({ chatname: chatRoom.chat_id }, function(err, foundChat){
+                        if (err){
+                            console.log(err);
+                        }
+                        else{
+                            foundChat.usernames.push(foundUser.username)
+                            foundChat.save()
+                        }
+                    })
+                }
+            })
+        }
+    })
+
     socket.on('chatMessage', function(msg) {
 
         User.findOne( {socketid: socket.id}, function(err, foundUser) {
@@ -154,9 +183,14 @@ app.get('/messages', function(req, res){
         } else {
             console.log(foundUser);
             list = foundUser.chats
-            console.log(list)
-           }
-        res.render("messages", {chats: list, session_user: req.session.user.User})
+            Friends.findOne({username: foundUser.username}, function(err, foundUser2) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    res.render("messages", {friends: foundUser2.friends, chats: list, session_user: req.session.user.User})
+                }
+            })
+        }
     }
 )
 })
@@ -515,6 +549,7 @@ app.get('/accept', function(req, res){
     // const q = url.parse("http://localhost:3000/views/friend.ejs")
     // console.log(q);
     const req_index = req.query.ID
+    console.log(req_index);
     Friends.findOne({username: req.session.user.User.username}, function(err, foundReceiver) {
         if (err) {
             console.log(err);
@@ -528,13 +563,12 @@ app.get('/accept', function(req, res){
                     foundSender.save()
                 }
             })
-            foundReceiver.requests.splice(req_index, req_index+1)
+            foundReceiver.requests.splice(req_index, req_index + 1)
             foundReceiver.save()
-            
+            res.redirect('/friends')        
         }
     })
     
-    res.redirect('/friends')
 })
 
 app.get('/decline', function (req, res) {
@@ -546,8 +580,9 @@ app.get('/decline', function (req, res) {
             foundUser.requests.splice(req_index, req_index+1)
             foundUser.save()
         }
+        res.redirect('/friends')
     })
-    res.redirect('/friends')
+    
 })
 
 app.get('/remove', function (req, res) {
@@ -581,8 +616,9 @@ app.get('/remove', function (req, res) {
             remover.friends.splice(friend_index, friend_index+1)
             remover.save()
         }
+        res.redirect('/friends')
     })
-   res.redirect('/friends')
+   
 })
 
 server.listen(3000 || process.env.Port, function(){

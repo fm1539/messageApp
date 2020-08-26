@@ -37,13 +37,27 @@
     <button onclick="close1();">X</button>
     <label for="gcname">Chat Name</label>
     <input type="text" id="gcname" name="gcname" placeholder="Enter Chat Name">
+    <form action="/messages">
     <button id="create-btn">Create</button>
+  </form>
   </div>
     <div class="chat-container">
       <header class="chat-header">
         <h1><i class="fas fa-smile"></i> ChatCord</h1>
         <h1 id="username"><%= session_user.username %></h1>
+        <button class="btn" id="preAdd" onclick="openAddUsers();">Add Users</button>
         <a href="index.html" class="btn">Leave Room</a>
+        <div id="add-users" class="hide">
+          <h1>Add Friends</h1>
+          <% for (var i = 0; i < friends.length; i++) { %>
+          <div>
+            <input id="<%= friends[i] %>" type="checkbox" name="" class="friends-list">
+            <h2><%= friends[i] %></h2>
+          <hr>
+        </div>
+        <% } %> 
+        <button id="addBtn" class="btn">Add</button>
+      </div>
       </header>
       <main class="chat-main">
         <div class="chat-sidebar">
@@ -51,7 +65,7 @@
           <button onclick="openPopup();"><i class="fa fa-plus" aria-hidden="true"></i></button>
           <div id="room-div">
          <% for (var i = 0; i < chats.length; i++) { %>   
-          <a href="/messages">
+          <a onclick="showAddUser();" href="/messages?chat_id=<%=chats[i]%>">
           
             <h2 id="room-name"> <%= chats[i] %> </h2>
           
