@@ -77,11 +77,13 @@ io.on('connection', socket => {
     //     io.emit('message', req.session.user.username + ' has left the chat');
     // });
 
-    //Listen for chatMessage
-    socket.on("join", ( username ) => {
+    //join room
+    socket.on("joinRoom", ( {username, chatRoom} ) => {
         newSocket(username, socket.id)
-        // console.log(ID);
-        // console.log(socket.id);
+        socket.join(chatRoom.chat_id)
+        socket.broadcast.to(chatRoom.chat_id).emit(
+            username + "joined"
+        )
     })
 
     socket.on("create-room", ({ gcname, username }) => {
@@ -107,36 +109,39 @@ io.on('connection', socket => {
         })
     })
 
-    socket.on('add-user', ({arr, chatRoom}) => {
-        for (var i = 0; i < arr.length; i++) {
-            console.log("i = " + i);
-            console.log(arr);
-            console.log(arr[i]);
-            var username = arr[i]
-            User.findOne({ username: username}, function(err, foundUser) {
-                console.log("i = " + i);
-                if (err){
-                    console.log(err);
-                }
-                else{
-                    console.log("i = " + i);
+    socket.on('add-user', ({username, chatRoom}) => {
+        console.log(username);
+        User.findOne({username: username}, function(err, foundUser) {
+            if (err) {
+                console.log(err);
+            }
+            else{
+                if (!foundUser.chats.includes(chatRoom.chat_id)){
                     foundUser.chats.push(chatRoom.chat_id)
                     foundUser.save()
-                    Chat.findOne({ chatname: chatRoom.chat_id }, function(err, foundChat){
-                        if (err){
-                            console.log(err);
-                        }
-                        else{
-                            foundChat.usernames.push(foundUser.username)
-                            foundChat.save()
-                        }
-                    })
-                }
-            })
+            } else {
+                console.log("User is already in this group chat");
+            }
         }
     })
 
-    socket.on('chatMessage', function(msg) {
+    Chat.findOne({chatname: chatRoom.chat_id}, function(err, foundChat) {
+        if (err) {
+            console.log(err);
+        } else {
+            if (!foundChat.usernames.includes(username)){
+                foundChat.usernames.push(username)
+                foundChat.save()
+        } else {
+            console.log("User is already in chat");
+        }
+    }
+    })
+        
+    })
+
+    //Listen for chatMessage
+    socket.on('chatMessage', ({ msg, chatRoom }) => {
 
         User.findOne( {socketid: socket.id}, function(err, foundUser) {
             if (err) {
@@ -147,10 +152,57 @@ io.on('connection', socket => {
                     text: msg,
                     time: moment().format('h:mm a')
                 }
-                io.emit("chatMessage", message_info)
+                Chat.findOne({chatname: chatRoom.chat_id}, function (err, foundChat) {
+                    if (err){
+                        console.log(err);
+                    }
+                    else{
+                        foundChat.messages.push(message_info)
+                        foundChat.save()
+                    }
+                })
+                io.to(chatRoom.chat_id).emit("chatMessage", message_info)
             }
         })
-    } )
+    })
+    socket.on('leave', ({username, chatRoom}) => {
+        User.findOne({username: username}, function(err, foundUser){
+            if (err){
+                console.log(err);
+            }
+            else{
+                var found_elem = false
+                var i = 0
+                while (!found_elem && i < foundUser.chats.length){
+                    if (foundUser.chats[i] == chatRoom.chat_id){
+                        foundUser.chats.splice(i, i+1)
+                        foundUser.save()
+                        found_elem = true
+                    }
+                    else{
+                        i++
+                    }
+                }
+            }
+        })
+        Chat.findOne({chatname: chatRoom.chat_id}, function(err, foundChat) {
+            if (err) {
+                console.log();
+            } else {
+                found_user = false
+                i = 0
+                while (!found_user && i < foundChat.usernames.length) {
+                    if (foundChat.usernames[i] == username) {
+                        foundChat.usernames.splice(i, i+1)
+                        foundChat.save()
+                        found_user = true
+                    } else {
+                        i++
+                    }
+                }
+            }
+        })
+    })
 })
 
 
@@ -177,6 +229,8 @@ app.get('/messages', function(req, res){
     //     }
     // })
     // console.log(req.session.user);
+    const chat_id = req.query.chat_id
+    console.log(chat_id);
     User.findOne( {username: req.session.user.User.username} , function(err, foundUser) {
         if (err) {
             console.log(err);
@@ -187,7 +241,21 @@ app.get('/messages', function(req, res){
                 if (err) {
                     console.log(err);
                 } else {
-                    res.render("messages", {friends: foundUser2.friends, chats: list, session_user: req.session.user.User})
+                    if (chat_id != undefined){
+                        Chat.findOne({chatname: chat_id}, function(err, foundChat){
+                            if (err){
+                                console.log(err);
+                            } else {
+                                console.log(chat_id);
+                                console.log(foundChat);
+                                const messages = foundChat.messages
+                                res.render("messages", {friends: foundUser2.friends, chats: list, session_user: req.session.user.User, messages: messages})
+                            }
+                        })
+                    } 
+                    else {
+                        res.render("messages", {friends: foundUser2.friends, chats: list, session_user: req.session.user.User, messages: []})
+                    }
                 }
             })
         }

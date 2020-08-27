@@ -21,29 +21,22 @@ function openAddUsers(){
 
 
 
-const checkbox = document.querySelectorAll('.friends-list')
+const btn = document.querySelectorAll('.friends-list')
 const chatForm = document.getElementById('chat-form')  //collect form id
 const chatMessages = document.querySelector(".chat-messages")
 const socket = io()
 const username = document.querySelector("#username").innerHTML
-const addButton = document.getElementById("addBtn")
-const pre_add = document.getElementById("preAdd")
+const addButton = document.querySelectorAll(".addBtn")
+const leaveRoom = document.querySelector("#leave")
 
 
-addButton.addEventListener("click", function(){
-    var arr = []
-    for (var i = 0; i < checkbox.length; i++){
-        if (checkbox[i].checked){
-            arr.push(checkbox[i].id)
-        }
-    }
+function addUserAction(username){
     const chatRoom = Qs.parse(location.search, {
         ignoreQueryPrefix: true
     })
-    console.log(chatRoom);
-
-    socket.emit("add-user", ({arr, chatRoom}))
-})
+    console.log(chatRoom.chat_id);
+    socket.emit("add-user", ({username, chatRoom}))
+}
 
 // const chatRoom = Qs.parse(location.search, {
 //     ignoreQueryPrefix: true
@@ -55,8 +48,10 @@ addButton.addEventListener("click", function(){
 //     pre_add.style.visibility = "visible"
 // }
 
-
-socket.emit("join", username)
+const chatRoom = Qs.parse(location.search, {
+    ignoreQueryPrefix: true
+})
+socket.emit("joinRoom", ({username, chatRoom}))
 
 //Message from Server
 socket.on('chatMessage', message => {
@@ -73,6 +68,12 @@ create_btn.addEventListener("click", function(){
     socket.emit('create-room', ({gcname, username}))
 })
 
+leaveRoom.addEventListener("click", function(){
+    const chatRoom = Qs.parse(location.search, {
+        ignoreQueryPrefix: true
+    })
+    socket.emit("leave", ({username, chatRoom}))
+})
 
 
     //Message submit
@@ -82,8 +83,11 @@ chatForm.addEventListener('submit', function(err) {
     //get message text
     const msg = err.target.elements.msg.value;
 
+    const chatRoom = Qs.parse(location.search, {
+        ignoreQueryPrefix: true
+    })
     //Emit message to server
-    socket.emit('chatMessage', msg)
+    socket.emit('chatMessage', ({msg, chatRoom}))
 
     err.target.elements.msg.value = ""
     err.target.elements.msg.focus()

@@ -45,18 +45,20 @@
       <header class="chat-header">
         <h1><i class="fas fa-smile"></i> ChatCord</h1>
         <h1 id="username"><%= session_user.username %></h1>
-        <button class="btn" id="preAdd" onclick="openAddUsers();">Add Users</button>
-        <a href="index.html" class="btn">Leave Room</a>
+        <!-- below button creates popup to add users to gc -->
+        <button class="btn" onclick="openAddUsers();">Add Users</button>
+        <a href="/messages"><button id="leave" class="btn">Leave Room</button></a>
         <div id="add-users" class="hide">
           <h1>Add Friends</h1>
+          <h1></h1>
           <% for (var i = 0; i < friends.length; i++) { %>
           <div>
-            <input id="<%= friends[i] %>" type="checkbox" name="" class="friends-list">
             <h2><%= friends[i] %></h2>
+            <!-- this button adds the users selected -->
+            <button id="<%= friends[i] %>" class="btn friends-list addBtn" onclick="addUserAction(this.id);">Add</button>
           <hr>
         </div>
         <% } %> 
-        <button id="addBtn" class="btn">Add</button>
       </div>
       </header>
       <main class="chat-main">
@@ -75,7 +77,18 @@
           <h3><i class="fas fa-users"></i> Users</h3>
           <ul id="users"></ul>
         </div>
-        <div class="chat-messages"></div>
+        <div class="chat-messages">
+          <% for (var i = 0; i < messages.length; i++) { %>
+            <div class="message">
+              <p class="meta">
+                <%= messages[i].username %>
+                <span><%= messages[i].time %></span></p>
+              <p class="text">
+                <%= messages[i].text %>
+              </p>
+            </div>
+          <% } %>
+        </div>
       </main>
       <div class="chat-form-container">
         <form id="chat-form">
