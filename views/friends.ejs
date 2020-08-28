@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>My Friends</title>
     <link rel="stylesheet" href="friends.css">
-    <link rel="stylesheet" href="settings.css">
+    <!-- <link rel="stylesheet" href="settings.css"> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
   </head>
   <body>
@@ -19,11 +19,14 @@
               <a class="nav-link" href="/messages">Messages</a>
             </li>
           <li class="nav-item">
-            <a class="nav-link" href="/friends">My Friends</a>
+            <a class="nav-link active" href="/friends">My Friends</a>
           </li>
           <li class="nav-item">
               <a class="nav-link" href="/settings">Settings</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Log Out</a>
+        </li>
         </ul>
       
       </div>
@@ -39,7 +42,7 @@
       <div class="searched-user">
         <h2 class="searched-user-header"><%= searched_friend  %></h2> 
         <a id="close-x" href="/remove_search" style="visibility: hidden;">X</a>
-        <h2><%= str %></h2>
+        <h2><%= message %></h2>
         <!-- <form style="display:inline-block;" class="" action="/add" method="POST"> -->
           <a id="add" href="/friends" onclick="add();" style="visibility: hidden;"><button class="add-button" type="submit" name="button">Add</button></a>
           <!-- </form> -->
@@ -127,4 +130,7 @@
 
   </script>
   <script type="text/javascript" src="file:///C:/Users/farha/Desktop/messageApp/friendrequest.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </html>

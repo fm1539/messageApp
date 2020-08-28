@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
+/* body{
+	height: 100%;
+} */
+
 :root {
 	--dark-color-a: #667aff;
 	--dark-color-b: #7386ff;
@@ -12,6 +16,15 @@
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
+}
+
+.members-popup{
+	position: absolute;
+	z-index: 1;
+	background-color: green;
+	width: 400px;
+	height: 200px;
+	
 }
 
 body {
@@ -28,6 +41,7 @@ body {
 	z-index: 1;
 	position: absolute;
 	top: 60px;
+	overflow-y: scroll;
 }
 
 .hide{
@@ -38,6 +52,7 @@ body {
 	z-index: 1;
 	position: absolute;
 	top: 60px;
+	
 }
 
 ul {
@@ -63,11 +78,11 @@ a {
 	margin-top: 50px;
 	max-width: 100%;
 	background: #fff;
-	overflow: hidden;
+	/* overflow: hidden; */
 }
 
 .chat-header {
-	background: var(--dark-color-a);
+	background: linear-gradient(#667eea, #764ba2);
 	color: #fff;
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
@@ -82,19 +97,31 @@ a {
 	grid-template-columns: 1fr 3fr;
 }
 
+.btn-div{
+	width: 22%;
+	text-align: center;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	position: fixed;
+	right: 10px;
+	background-color: red;
+	z-index: 1;
+	
+}
+
+
 .chat-sidebar {
-	background: var(--dark-color-b);
+	background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
 	color: #fff;
 	padding: 20px 20px 60px;
 	overflow-y: scroll;
 }
 
-.chat-sidebar h2 {
+/* .chat-sidebar h2 {
 	font-size: 20px;
-	background: rgba(0, 0, 0, 0.1);
 	padding: 10px;
 	margin-bottom: 20px;
-}
+} */
 
 .chat-sidebar h3 {
 	margin-bottom: 15px;

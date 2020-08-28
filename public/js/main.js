@@ -14,6 +14,7 @@ function close1(){
     popup.classList.add("hide")        
 }
 
+
 function openAddUsers(){
     add_users.classList.remove("hide")
     add_users.classList.add("show")
@@ -29,13 +30,22 @@ const username = document.querySelector("#username").innerHTML
 const addButton = document.querySelectorAll(".addBtn")
 const leaveRoom = document.querySelector("#leave")
 
-
 function addUserAction(username){
     const chatRoom = Qs.parse(location.search, {
         ignoreQueryPrefix: true
     })
     console.log(chatRoom.chat_id);
     socket.emit("add-user", ({username, chatRoom}))
+}
+
+function viewMembers(){
+    const chatRoom = Qs.parse(location.search, {
+        ignoreQueryPrefix: true
+    })
+    console.log(chatRoom.chat_id);
+    document.querySelector("#members-popup").classList.remove('hide')
+    document.querySelector("#members-popup").classList.add("show")
+    socket.emit("view-members", chatRoom.chat_id)
 }
 
 // const chatRoom = Qs.parse(location.search, {
@@ -59,9 +69,29 @@ socket.on('chatMessage', message => {
     chatMessages.scrollTop = chatMessages.scrollHeight
 })
 
+socket.on('retrieve-members', ({chat}) => {
+    console.log("working");
+    for (var i = 0; i < chat.usernames.length; i++){
+        const div = document.createElement('div');
+        div.classList.add('member');
+        div.innerHTML = '<h1>' + chat.usernames[i] + '</h1><hr>'
+        document.querySelector("#members-popup").appendChild(div)
+    }
+})
+
+
+function close2(){
+    document.querySelector("#members-popup").classList.remove("show")
+    document.querySelector("#members-popup").classList.add("hide")
+}
+
+function close3(){
+    document.querySelector("#add-users").classList.remove("show")
+    document.querySelector("#add-users").classList.add("hide")
+}
+
 
 const create_btn = document.getElementById('create-btn')
-console.log(gcname);
 create_btn.addEventListener("click", function(){
     const gcname = document.getElementById('gcname').value
     console.log("working");

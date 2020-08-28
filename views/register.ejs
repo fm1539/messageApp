@@ -43,6 +43,11 @@
   <body>
     <form action="/register" method="POST" class="form-signin">
   <div class="text-center mb-4">
+      <% if (message.length > 0) { %>
+    <div class="alert alert-danger">
+      <%= message %>
+    </div> 
+    <% } %>
     <h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
   </div>
 

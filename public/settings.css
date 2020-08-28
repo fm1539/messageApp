@@ -1,3 +1,12 @@
+html{
+    height: 120%;
+}
+
+body{
+    background: linear-gradient(#fdfcfb, #e2d1c3);
+    
+}
+
 
 .settings-table {
     text-align: center;
@@ -6,27 +15,85 @@
     margin-top: 100px;
 }
 
-.update-info-button{
+/* .update-info-button{
     float: right;
     border-radius: 5px;
 }
 .update-info-button:hover{
     background-color: black;
     color: white;
+} */
+.setting-headers{
+    font-weight: bold;
 }
+#overlay {
+    position:absolute;
+    display:none; 
+
+   /* color with alpha transparency */
+    background-color: rgba(0, 0, 0, 0.7);
+
+   /* stretch to screen edges */
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.text{
+    position: absolute;
+    top: 50px;
+    left:20%;
+}
+
+.update-info-button {
+    display: inline-block;
+    color: #fff;
+    background: #80d0c7;
+    margin: 20px;
+    width: 130px;
+    height: 40px;
+    border-radius: 5px;
+    position: relative;
+    float: right;
+    overflow: hidden;
+}
+
+.update-info-button:before {
+    content: "";
+    position: absolute;
+    top: -30px;
+    left: -80px;
+    height: 100px;
+    width: 70px;
+    background: rgba(255, 255, 255, .7);
+    transform: rotate(20deg);
+}
+
+.update-info-button:hover:before {
+    left: 150px;
+    transition: all .5s;
+}
+.highlight {margin-bottom:100px;}
 
 
 .username_div, .email_div, .last_Name_div, .first_name_div {
     z-index: 1;
     width: 70%;
-    height: 300px;
-    border: solid black;
-    background-color: blue;
+    height: 60%;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(#ffc3a0, #ffafbd);
     position: absolute;
-    top: 75px;
+    top: 200px;
     left: 15%;
 
 }
+
+#change-form{
+    margin-top: 50px;
+}
+
 #close-button{
     margin-top: 5px;
     margin-right: 5px;
