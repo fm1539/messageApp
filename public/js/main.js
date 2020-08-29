@@ -79,7 +79,6 @@ socket.on('retrieve-members', ({chat}) => {
     }
 })
 
-
 function close2(){
     document.querySelector("#members-popup").classList.remove("show")
     document.querySelector("#members-popup").classList.add("hide")
