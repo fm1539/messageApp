@@ -14,8 +14,8 @@
     <title>ChatCord App</title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="index.html">Carousel</a>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background-color: #50b459;">
+      <a class="navbar-brand" href="/"><img style="width:130px;" src="img/logo" alt=""></a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -36,22 +36,28 @@
         </ul>
       </div>
   </nav>
-  <div id='members-popup' class="hide">
-    <button id="closeBtn2" onclick="close2();">X</button>
+  <div id="overlay1">
+    <div id='members-popup' class="hide">
+      <button id="closeBtn2" onclick="close2();">X</button>
+    </div>
   </div>
-  <div id="add-gc" class="hide">
-    <button onclick="close1();">X</button>
-    <label for="gcname">Chat Name</label>
-    <input type="text" id="gcname" name="gcname" placeholder="Enter Chat Name">
-    <form action="/messages">
-    <button id="create-btn">Create</button>
-  </form>
+  <div id="overlay2">
+    <div id="add-gc">
+      <button onclick="close1();">X</button>
+      <label for="gcname">Chat Name</label>
+      <input type="text" id="gcname" name="gcname" placeholder="Enter Chat Name">
+      <form action="/messages">
+      <button id="create-btn" class="btn">Create</button>
+    </form>
+    </div>
   </div>
+  
     <div class="chat-container">
-      <div id="add-users" class="hide">
+      <div id="overlay3">
+      <div id="add-user">
         <button onclick="close3();">X</button>
         <h1>Add Friends</h1>
-        <h1></h1>
+      
         <% for (var i = 0; i < friends.length; i++) { %>
         <div>
           <h2><%= friends[i] %></h2>
@@ -61,16 +67,18 @@
       </div>
       <% } %> 
     </div>
+    </div>
       <main class="chat-main">
         <div class="chat-sidebar">
-          <h1 id="username"><%= session_user.username %></h1>
-          
-          <button onclick="openPopup();" class="btn" style="float: right;">Create Chat</i></button>
+          <div class="sidebar-header">
+          <h2 id="username" style="color: black; margin-top: 6px;"><%= session_user.username %></h2>
+          <button onclick="openPopup();" class="btn" style="float: right; position: relative; right: 10px; top: 8px;">Create Chat</i></button>
+        </div>
           <div id="room-div">
          <% for (var i = 0; i < chats.length; i++) { %>   
-          <a href="/messages?chat_id=<%=chats[i]%>">
+          <a href="/messages?chat_id=<%=chats[i]%>" onclick="scrollBottomDiv();">
             <div>
-              <h2 id="room-name" style="color:tomato;"> <%= chats[i] %> </h2>
+              <h2 id="room-name" style="color:black"> <%= chats[i] %> </h2>
             </div>
         </a>
         <hr>
@@ -80,15 +88,24 @@
         
           
             <% if (show == true) { %> 
-              <div class="chat-navbar">
-                <h1 id=chatName></h1>
+              <div class="chat-navbar" style="padding-top: 20px; border-bottom: 5px solid black; border-width: thin;">
+                <h3 id=chatName style="margin-top: 20px; display: inline-block;"><%= chat_name %></h3>
                 <div class="btn-div">
+                  <!-- <h1 id=chatName><%= chat_name %></h1> -->
+                  <button class="btn" onclick='scrollBottomDiv();'>See Latest Messages</button>  
               <button class="btn" onclick='viewMembers();'>Members</button>  
               <button class="btn addUser-btn" onclick="openAddUsers();">Add Users</button>
               <a href="/messages"><button id="leave" class="btn leaveRoom-btn">Leave Room</button></a>
+                  
               </div>
             </div>
             <div class="chat-messages">
+              <div class="message">
+                <p class="meta">Lorem Epsum<span>4:00</span></p>
+                <p class="text">
+                  Lorem Epsum
+                </p>
+              </div>
               <% for (var i = 0; i < messages.length; i++) { %>
                 <div class="message">
                   <p class="meta">
@@ -137,5 +154,9 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script>
+
+    </script>
   </body>
+
 </html>

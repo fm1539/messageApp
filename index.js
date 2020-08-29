@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express")
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
@@ -17,7 +18,9 @@ const server = http.createServer(app)
 const flash = require('connect-flash');
 const e = require("express");
 const io = socketio(server);
-const URI = "mongodb+srv://isfar:testing321@cluster0.jrwic.mongodb.net/data?retryWrites=true&w=majority"
+const URI = process.env.SECURED_URI
+const md5 = require("md5")
+
 
 app.use(express.static("public"))
 app.use('/views', express.static(__dirname + '/views'))
@@ -33,7 +36,8 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 app.use(session({
     cookieName: 'session',
-    secret: 'random_string_goes_here',
+    // secret: 'random_string_goes_here',
+    secret: process.env.SECRET_KEY,
     duration: 30 * 60 * 1000,
     activeDuration: 5 * 60 * 1000,
   }));
@@ -80,9 +84,8 @@ io.on('connection', socket => {
     socket.on("joinRoom", ( {username, chatRoom} ) => {
         newSocket(username, socket.id)
         socket.join(chatRoom.chat_id)
-        socket.broadcast.to(chatRoom.chat_id).emit(
-            username + "joined"
-        )
+        const join = username + " read"
+        socket.broadcast.to(chatRoom.chat_id).emit('joinMessage',join)
     })
 
     socket.on("create-room", ({ gcname, username }) => {
@@ -275,14 +278,14 @@ app.get('/messages', function(req, res){
                                     console.log(foundChat);
                                     const messages = foundChat.messages
                                     const show = true
-                                    res.render("messages", {friends: foundUser2.friends, chats: list, session_user: req.session.user.User, messages: messages, show: show})
+                                    res.render("messages", {friends: foundUser2.friends, chats: list, session_user: req.session.user.User, messages: messages, show: show, chat_name: chat_id})
                                 }
                             })
                         } 
                         else {
                             const show = false
                             const messages = {username: '', text: 'Welcome to Traverse!', time: ''}
-                            res.render("messages", {friends: foundUser2.friends, chats: list, session_user: req.session.user.User, messages: messages, show: show})
+                            res.render("messages", {friends: foundUser2.friends, chats: list, session_user: req.session.user.User, messages: messages, show: show, chat_name: ""})
                         }
                     }
                 })
@@ -349,7 +352,7 @@ app.get("/settings", function(req,res){
 
 app.post("/login", function(req,res){
     const email = req.body.email
-    const password = req.body.password
+    const password = md5(req.body.password)
     // req.session.id = req.session.id || uuidv4()
     User.findOne({email: email}, function(err, User){
         if (err){
@@ -376,8 +379,8 @@ app.post("/login", function(req,res){
 })
 
 app.post("/register", function(req, res){
-    var pass = req.body.password
-    var reppass = req.body.repeatPass
+    var pass = md5(req.body.password)
+    var reppass = md5(req.body.repeatPass)
     User.findOne({username: req.body.username}, function(err, foundUser){
         if (err){
             console.log(err);
@@ -404,7 +407,7 @@ app.post("/register", function(req, res){
                                     first: req.body.first,
                                     last: req.body.last,
                                     email: req.body.email,
-                                    password: req.body.password,
+                                    password: pass,
                                     socketid: "",
                                     chats: []
                                 })

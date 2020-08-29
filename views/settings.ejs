@@ -8,9 +8,18 @@
     <link rel="stylesheet" href="settings.css">
 </head>
 <body>
-    <div id="overlay" class="hide"></div>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="index.html">Carousel</a>
+    <div id="overlay">
+        <div id="popup" class="hide">
+            <h1 id="action-name" style="text-align: center;"></h1>
+            <button id="close-button" onclick="close1();">&#10006;</button>
+            <form id="change-form" action="/settings" method="POST">
+                <input id="text_input" name="bob" type="text">
+                <button onclick="close1();" type="submit" class="saveBtn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background-color: #50b459;">
+        <a class="navbar-brand" href="/"><img style="width:130px;" src="img/logo" alt=""></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -61,14 +70,7 @@
         </ul>
     </div>
    
-    <div id="popup" class="hide">
-        <h1 id="action-name" style="text-align: center;"></h1>
-        <button id="close-button" onclick="close1();">&#10006;</button>
-        <form id="change-form" action="/settings" method="POST">
-            <input id="text_input" name="bob" type="text">
-            <button type="submit">Save Changes</button>
-        </form>
-    </div>
+    
 </body>
 
 <script>
@@ -83,7 +85,7 @@
         popup.classList.add("show")
         popup.classList.add("username_div")
         text_input.name = "username";
-        document.querySelector("body").style.backgroundColor = "rgba(0, 0, 0, 0.7)"
+        document.getElementById("overlay").style.display = "block";
 
     }
     
@@ -93,6 +95,7 @@
         popup.classList.remove("hide")
         popup.classList.add("show")
         text_input.name = "email";
+        document.getElementById("overlay").style.display = "block";
     }
     
     function first_name(){
@@ -101,6 +104,7 @@
         popup.classList.add("show")
         popup.classList.add("first_name_div")
         text_input.name = "firstName";    
+        document.getElementById("overlay").style.display = "block";
     }
 
     function last_name() {
@@ -109,12 +113,14 @@
         popup.classList.remove("hide")
         popup.classList.add("show")
         text_input.name = "lastName"
+        document.getElementById("overlay").style.display = "block";
     }
 
     function close1(){
         console.log(popup.classList);
         popup.classList=""
         popup.classList.add("hide")
+        document.getElementById("overlay").style.display = "none";
     }
     
 </script>

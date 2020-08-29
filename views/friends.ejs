@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
   </head>
   <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="index.html">Carousel</a>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background-color: #50b459;">
+      <a class="navbar-brand" href="/"><img style="width:130px;" src="img/logo" alt=""></a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -37,14 +37,14 @@
       <div class="add">
         <!-- <form class="" action="/search" method="POST"> -->
           <input id="search-input" name="searched_username" type="text">
-          <a id="search" href="/friends" onclick="searched();"><button type="submit">Search</button></a>
+          <a id="search" href="/friends" onclick="searched();"><button class="btn2" type="submit">Search</button></a>
         <!-- </form> -->
       <div class="searched-user">
         <h2 class="searched-user-header"><%= searched_friend  %></h2> 
         <a id="close-x" href="/remove_search" style="visibility: hidden;">X</a>
         <h2><%= message %></h2>
         <!-- <form style="display:inline-block;" class="" action="/add" method="POST"> -->
-          <a id="add" href="/friends" onclick="add();" style="visibility: hidden;"><button class="add-button" type="submit" name="button">Add</button></a>
+          <a id="add" href="/friends" onclick="add();" style="visibility: hidden;"><button class="add-button btn2" type="submit" name="button">Add</button></a>
           <!-- </form> -->
       </div>
 
@@ -77,10 +77,10 @@
             <input class="accepted_friend" style="visibility: hidden; z-index: -1;" name="accepted_friend" type="text">
             <h2 id="userName"> <%= requests[i] %></h2>
             <a href="/accept?ID=<%= i %>"> 
-           <button id="<%= i %>" onclick="accept_button();" type="submit" name="accept">Accept</button></form></a>
+           <button id="<%= i %>" onclick="accept_button();" type="submit" name="accept" class="btn2">Accept</button></form></a>
           </a>
           <a href="/decline?ID=<%= i %>">
-            <button id="<%= i %>" type="submit" name="decline">Decline</button>
+            <button id="<%= i %>" type="submit" name="decline" class="btn2">Decline</button>
           </a>
           </div>
           <hr>
@@ -129,7 +129,6 @@
     }
 
   </script>
-  <script type="text/javascript" src="file:///C:/Users/farha/Desktop/messageApp/friendrequest.js"></script>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>

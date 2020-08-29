@@ -1,11 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
 body{
-	height: 100%;
+	height: 96%;
+	overflow-y: hidden;
 } 
 
 html{
-	height: 100%;
+	height: 96%;
 }
 
 :root {
@@ -22,12 +23,17 @@ html{
 	padding: 0;
 }
 
-.members-popup{
-	position: absolute;
+#members-popup{
 	z-index: 1;
-	background-color: green;
-	width: 400px;
-	height: 200px;
+    width: 70%;
+    height: 60%;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(#ffc3a0, #ffafbd);
+    position: absolute;
+    top: 200px;
+	left: 15%;
+	overflow-y: scroll;
 	
 }
 
@@ -35,6 +41,32 @@ body {
 	font-family: 'Roboto', sans-serif;
 	font-size: 16px;
 	background: var(--light-color);
+}
+
+#add-gc{
+	z-index: 1;
+    width: 70%;
+    height: 60%;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(#ffc3a0, #ffafbd);
+    position: absolute;
+    top: 200px;
+	left: 15%;
+	overflow-y: scroll;
+}
+
+#add-user{
+	z-index: 1;
+    width: 70%;
+    height: 60%;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(#ffc3a0, #ffafbd);
+    position: absolute;
+    top: 200px;
+	left: 15%;
+	overflow-y: scroll;
 }
 
 .show{
@@ -76,11 +108,54 @@ a {
 	font-size: 17px;
 }
 
+#overlay1{
+	position: fixed; 
+	display: none; 
+	width: 100%; 
+	height: 100%; 
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.5); 
+	z-index: 3; 
+	cursor: pointer;
+}
+
+#overlay2{
+	position: fixed; 
+	display: none; 
+	width: 100%; 
+	height: 100%; 
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.5); 
+	z-index: 3; 
+	cursor: pointer;
+}
+
+#overlay3{
+	position: fixed; 
+	display: none; 
+	width: 100%; 
+	height: 100%; 
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.5); 
+	z-index: 3; 
+	cursor: pointer;
+
+}
+
 /* Chat Page */
 
 .chat-container {
 	margin-top: 50px;
-	height: 85%;
+	height: 89%;
 	max-width: 100%;
 	background: #fff;
 	/* overflow: hidden; */
@@ -94,13 +169,14 @@ a {
 }
 
 .chat-navbar{
-	width: 80%;
+	width: 75%;
 	/* text-align: center; */
 	padding-top: 10px;
+	padding-left: 10px;
 	padding-bottom: 10px;
 	position: fixed;
 	right: 0;
-	background-color: red;
+	background-color: white;
 	z-index: 1;
 	
 }
@@ -108,6 +184,7 @@ a {
 .btn-div{
 	position: relative;
 	float: right;
+	top: 20px;
 	right: 10px;
 }
 
@@ -129,6 +206,17 @@ a {
 	z-index: 2;
 }
 
+.sidebar-header{
+	border-bottom: solid black;
+	border-width: thin;
+	height: 50px;
+	width: 25%;
+	position: fixed;
+	left: 0;
+	top: 65px;
+	background-color: white;
+}
+
 /* .chat-sidebar h2 {
 	font-size: 20px;
 	padding: 10px;
@@ -146,7 +234,6 @@ a {
 .chat-messages {
 	padding: 30px;
 	padding-top: 0;
-	
 	overflow-y: scroll;
 }
 

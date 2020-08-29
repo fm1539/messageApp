@@ -5,6 +5,7 @@ var add_users = document.getElementById('add-users')
 function openPopup(){
     popup.classList.remove("hide")
     popup.classList.add("show")
+    document.getElementById("overlay2").style.display = "block";
   }
 
 function close1(){
@@ -12,12 +13,12 @@ function close1(){
         popup.classList.remove(popup.classList[i]);
     }
     popup.classList.add("hide")        
+    document.getElementById("overlay2").style.display = "none";
 }
 
 
 function openAddUsers(){
-    add_users.classList.remove("hide")
-    add_users.classList.add("show")
+    document.getElementById("overlay3").style.display = "block";
 }
 
 
@@ -45,6 +46,7 @@ function viewMembers(){
     console.log(chatRoom.chat_id);
     document.querySelector("#members-popup").classList.remove('hide')
     document.querySelector("#members-popup").classList.add("show")
+    document.getElementById("overlay1").style.display = "block";
     socket.emit("view-members", chatRoom.chat_id)
 }
 
@@ -63,11 +65,27 @@ const chatRoom = Qs.parse(location.search, {
 })
 socket.emit("joinRoom", ({username, chatRoom}))
 
+socket.on('joinMessage', (join) => {
+    var today = new Date()
+    var message = {
+        username: "Traverse",
+        text: join,
+        time: today.getHours() + ":" + today.getMinutes()
+    }
+    outputMessage(message)
+    chatMessages.scrollTop = chatMessages.scrollHeight
+})
+
 //Message from Server
 socket.on('chatMessage', message => {
     outputMessage(message);
     chatMessages.scrollTop = chatMessages.scrollHeight
 })
+
+function scrollBottomDiv(){
+    console.log("working");
+    chatMessages.scrollTop = chatMessages.scrollHeight
+}
 
 socket.on('retrieve-members', ({chat}) => {
     console.log("working");
@@ -80,13 +98,11 @@ socket.on('retrieve-members', ({chat}) => {
 })
 
 function close2(){
-    document.querySelector("#members-popup").classList.remove("show")
-    document.querySelector("#members-popup").classList.add("hide")
+    document.getElementById("overlay1").style.display = "none";
 }
 
 function close3(){
-    document.querySelector("#add-users").classList.remove("show")
-    document.querySelector("#add-users").classList.add("hide")
+    document.getElementById("overlay3").style.display = "none";
 }
 
 
